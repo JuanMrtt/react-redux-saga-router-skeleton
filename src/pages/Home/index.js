@@ -1,43 +1,47 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { Container, Typography, Card, Grid, TextField, Button } from '@material-ui/core'
+import styles from './style';
+import { MovieIcon } from '../../icons';
 
-import { getDemoRequest } from '../../redux/actions/demoActions';
+export default ({ history }) => {
+    console.log(history)
+    const [searchText, setSearchText] = useState('')
+    const classes = styles();
+    const handleSearchTextChange = e => {
+        setSearchText(e.target.value);
+    }
+    const handleCleanTextClick = e => {
+        setSearchText('');
+    }
+    const handleSearchTextClick = e => {
+        history.push(`/results?movieName=${searchText}`)
+    }
 
-import User from '../../components/User';
 
-class Home extends Component {
-	componentWillMount() {
-		this.props.getDemoRequest('hey');
-	}
-	render() {
-		const { users } = this.props;
 
-		let items = [];
-		if (typeof users !== 'undefined') {
-			items = users.map((value, index) => {
-				return <User key={index} {...value} />;
-			});
-		}
-		return <div>{items}</div>;
-	}
+    return (
+        (<Container className={classes.container}>
+            <Card className={classes.cardContainer}>
+                <Grid container className={classes.titleGridContainer}>
+                    <Grid>
+                        <Typography className={classes.title}>Bienvenido!</Typography>
+                    </Grid>
+                    <Grid>
+                        <label><MovieIcon className={classes.MovieIcon}></MovieIcon></label>
+                    </Grid>
+                </Grid>
+
+                <TextField
+                    value={searchText}
+                    placeholder='Buscar...'
+                    onChange={handleSearchTextChange}
+                    className={classes.textFieldSearch} />
+                <Grid className={classes.buttonContainer}>
+                    <Button variant='contained' onClick={handleCleanTextClick}>Limpiar</Button>
+                    <Button variant='contained' className={classes.searchButton} color='primary' size="large" onClick={handleSearchTextClick}>Buscar</Button>
+                </Grid>
+
+            </Card>
+        </Container>)
+    )
 }
-
-const mapDispatchToProps = (dispatch, props) => {
-	return {
-		getDemoRequest: payload => {
-			dispatch(getDemoRequest(payload));
-		}
-	};
-};
-const mapStateToProps = state => {
-	return {
-		users: state.demoReducer[0]
-	};
-};
-
-Home.propTypes = {
-	dispatch: PropTypes.func
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
